@@ -1,0 +1,57 @@
+zabbix_export:
+  version: '5.4'
+  date: '2022-06-29T05:51:09Z'
+  groups:
+    -
+      uuid: 748ad4d098d447d492bb935c907f652f
+      name: Templates/Databases
+  templates:
+    -
+      uuid: 9f69ad076bba45638fa7058427381147
+      template: 'MySQL Slave Active'
+      name: 'MySQL Slave Active'
+      groups:
+        -
+          name: Templates/Databases
+      discovery_rules:
+        -
+          uuid: c93aad66c2bb409caec7e91efeca02e0
+          name: 'Mysql slave discovery'
+          type: ZABBIX_ACTIVE
+          key: mysql.slave.discovery
+          delay: 30m
+          item_prototypes:
+            -
+              uuid: c7c4aa5dda95468abe343de61dac5319
+              name: 'Mysql slave delay on port {#MYSQLPORT}'
+              type: ZABBIX_ACTIVE
+              key: 'mysql.slave.delay[{#MYSQLPORT}]'
+              delay: 30s
+              description: 'mysql slave delay'
+              tags:
+                -
+                  tag: Application
+                  value: 'Mysql Slave'
+              trigger_prototypes:
+                -
+                  uuid: fbe4252fe433489ab72cb7cc1bc735d2
+                  expression: 'min(/MySQL Slave Active/mysql.slave.delay[{#MYSQLPORT}],3m)>500'
+                  name: 'Mysql slave delay on port {#MYSQLPORT}'
+                  priority: HIGH
+            -
+              uuid: 977c8c2de56d4680a7ef220e8cbf54fe
+              name: 'Mysql slave status on port {#MYSQLPORT}'
+              type: ZABBIX_ACTIVE
+              key: 'mysql.slave.ping[{#MYSQLPORT}]'
+              delay: 30s
+              description: 'mysql slave status'
+              tags:
+                -
+                  tag: Application
+                  value: 'Mysql Slave'
+              trigger_prototypes:
+                -
+                  uuid: ec4d860a1edc474c8f76d9078a0d2d68
+                  expression: 'sum(/MySQL Slave Active/mysql.slave.ping[{#MYSQLPORT}],#5)=0'
+                  name: 'Mysql slave is down on port {#MYSQLPORT}'
+                  priority: HIGH

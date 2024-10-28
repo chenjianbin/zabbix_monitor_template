@@ -1,0 +1,32 @@
+zabbix_export:
+  version: '5.4'
+  date: '2022-06-29T05:47:34Z'
+  groups:
+    -
+      uuid: 7df96b18c230490a9a0a9e2307226338
+      name: Templates
+  templates:
+    -
+      uuid: dfd797d11a2349db8f41aaf8b562c6f9
+      template: 'Beats Active'
+      name: 'Beats Active'
+      groups:
+        -
+          name: Templates
+      items:
+        -
+          uuid: 7be9f1c53d1c48ab9f5554cd8547ffa0
+          name: 'Filebeat Service Status'
+          type: ZABBIX_ACTIVE
+          key: filebeat.status
+          delay: 30s
+          tags:
+            -
+              tag: Application
+              value: Filebeat
+          triggers:
+            -
+              uuid: 63dc2b54182f476e96a7f00d4010a4ba
+              expression: 'avg(/Beats Active/filebeat.status,#3)>1'
+              name: 'Filebeat Service Is Down'
+              priority: HIGH
